@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "beets-ai-tagcleaner"
+version = "0.1.0"
+description = "Beets plugin that cleans artist/title tags with a local LLM (Ollama) before MusicBrainz matching"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "abugeia" }]
+keywords = ["beets", "music", "metadata", "llm", "ollama", "musicbrainz", "youtube"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Multimedia :: Sound/Audio",
+  "License :: OSI Approved :: MIT License",
+]
+dependencies = ["beets>=1.6.0"]
+
+[project.urls]
+Homepage = "https://github.com/abugeia/beets-ai-tagcleaner"
+Issues = "https://github.com/abugeia/beets-ai-tagcleaner/issues"
+
+[tool.setuptools]
+packages = ["beetsplug"]
