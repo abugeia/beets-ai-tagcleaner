@@ -19,8 +19,8 @@ MusicBrainz with a perfect score.
 
 ## What it does
 
-On `import_task_start` (before matching), the plugin asks an LLM to rewrite the
-raw `artist`/`title` to clean values:
+On `import_task_start` (before matching), the plugin sends the raw
+`artist`/`title` **and the file name** to an LLM, which returns clean values:
 
 ```
 "Benson Boone" / "Benson Boone - Cry (Official Lyric Video)"  ->  "Benson Boone" / "Cry"
@@ -36,7 +36,7 @@ fields, so it never invents catalogue data.
 mode). Ollama's OpenAI-compatible endpoint does **not** return tool calls for
 small local models, so it fails with `No tool calls found (mode: TOOLS)`.
 This plugin uses plain **JSON mode** (`/api/generate` with `"format": "json"`),
-which works reliably with models as small as `qwen2.5:3b`.
+which works reliably with small local models.
 
 ## Install
 
@@ -53,19 +53,24 @@ plugins:
 
 aitagcleaner:
   url: http://localhost:11434/api/generate   # Ollama generate endpoint
-  model: qwen2.5:3b                           # small & fast is enough
+  model: gemma3:4b                            # see bench/ for the comparison
   timeout: 60
   auto: yes                                   # run automatically during import
   # prompt: "..."                             # override the cleaning prompt
 ```
 
-Pull the model once: `ollama pull qwen2.5:3b`.
+Pull the model once: `ollama pull gemma3:4b`.
 
 ## Notes
 
 - Requires a running Ollama (or any OpenAI-compatible endpoint honouring
   `{"format": "json"}`).
-- Network/model errors never block the import — the track is left untouched.
+- The file name rescues tracks whose tags are empty, or SoundCloud rips whose
+  `title` is the uploader's name.
+- Already-clean tags are left untouched (measured on 52 real tags, see
+  [`bench/`](bench/README.md)).
+- Network/model errors never block the import — the track is left untouched and
+  a warning is logged.
 - Best paired with the `chroma` plugin (acoustic fingerprinting) for tracks
   that have no usable tags at all.
 
